@@ -1,4 +1,4 @@
-# hitpoints-cms
+# Hitpoints
 
 Self-hosted wiki CMS for hitpoints.eu (Unraid + nginx).
 
@@ -7,7 +7,7 @@ Self-hosted wiki CMS for hitpoints.eu (Unraid + nginx).
 To run or deploy, check out `dev`:
 
 ```
-git clone https://github.com/Rahkun3/hitpoints-cms.git
-cd hitpoints-cms
+git clone https://github.com/Rahkun3/Hitpoints.git
+cd Hitpoints
 git checkout dev
 ```
