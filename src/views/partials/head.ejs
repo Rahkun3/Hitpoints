@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  <% if (typeof description !== "undefined" && description) { %>
+  <meta name="description" content="<%= description %>" />
+  <% } %>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/admin.css" />
+  <script defer src="/vendor/marked.min.js"></script>
+  <script defer src="/admin.js"></script>
+  <link rel="icon" href="/assets/logo.png" />
+</head>
+<body>

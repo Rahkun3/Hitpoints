@@ -1,0 +1,101 @@
+<%- include("partials/head") %>
+<%- include("partials/header") %>
+
+<main class="wrap">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="/">Universes</a>
+    <span class="sep">/</span>
+    <span><%= meta.name %></span>
+  </nav>
+
+  <% if (hub && hub.banner) { %>
+  <figure class="page-banner">
+    <img src="<%= hub.banner %>" alt="<%= meta.name %> universe banner" />
+  </figure>
+  <% } else if (meta.banner) { %>
+  <figure class="page-banner">
+    <img src="<%= meta.banner %>" alt="<%= meta.name %> universe banner" />
+  </figure>
+  <% } %>
+
+  <header class="article-header" style="border-bottom: none; padding-bottom: 0;">
+    <p class="hero-eyebrow">Universe hub</p>
+    <h1><%= (hub && hub.title) || meta.name %></h1>
+    <p class="lede" style="color: var(--muted); max-width: 56ch; margin-bottom: 1rem;">
+      <%= (hub && hub.lede) || meta.blurb %>
+    </p>
+    <div class="badges">
+      <% (hub && hub.badges.length ? hub.badges : meta.badges).forEach(function (b) { %>
+      <span class="badge <%= badgeClass(b) %>"><%= b %></span>
+      <% }) %>
+    </div>
+  </header>
+
+  <% if (bodyHtml) { %>
+  <div class="prose hub-intro"><%- bodyHtml %></div>
+  <% } else { %>
+  <div class="callout"><strong>Continuity rule:</strong> <%= meta.continuity %></div>
+  <% } %>
+
+  <nav class="cat-nav" aria-label="Categories">
+    <% meta.categories.forEach(function (cat, i) { %>
+    <a class="cat-pill <%= i === 0 ? 'active' : '' %>" href="#<%= categoryAnchor(cat) %>"><%= cat %></a>
+    <% }) %>
+  </nav>
+
+  <% if (priority && priority.length) { %>
+  <section class="hub-section" id="priority">
+    <h2>Priority <span class="count"><%= priority.length %></span></h2>
+    <div class="priority-list">
+      <% if (hub) { %>
+      <a class="priority-item" href="/wiki/<%= universe %>"><span class="num">H</span> Universe hub</a>
+      <% } %>
+      <% priority.forEach(function (a) { %>
+      <a class="priority-item" href="/wiki/<%= a.universe %>/<%= a.slug %>">
+        <span class="num"><%= a.priority %></span> <%= a.title %>
+      </a>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <% Object.keys(grouped).forEach(function (cat) { %>
+  <% if (categoryAnchor(cat) === "hub") return; %>
+  <section class="hub-section" id="<%= categoryAnchor(cat) %>">
+    <h2><%= cat %> <span class="count"><%= grouped[cat].length %></span></h2>
+    <% if (!grouped[cat].length) { %>
+    <div class="card coming-soon" style="max-width: 420px;">
+      <span class="card-tag">Coming soon</span>
+      <h3>No articles yet</h3>
+      <p>This category is empty — add one from Admin.</p>
+    </div>
+    <% } else { %>
+    <div class="card-grid">
+      <% grouped[cat].forEach(function (a) { %>
+      <a class="card" href="/wiki/<%= a.universe %>/<%= a.slug %>">
+        <% if (a.portrait) { %>
+        <div class="card-media <%= categoryAnchor(cat) === 'people' ? 'portrait' : '' %>">
+          <img src="<%= a.portrait %>" alt="<%= a.title %>" />
+        </div>
+        <% } else if (a.banner) { %>
+        <div class="card-media">
+          <img src="<%= a.banner %>" alt="<%= a.title %>" />
+        </div>
+        <% } %>
+        <span class="card-tag"><%= a.category %></span>
+        <h3><%= a.title %></h3>
+        <p><%= a.lede %></p>
+        <div class="badges">
+          <% (a.badges || []).forEach(function (b) { %>
+          <span class="badge <%= badgeClass(b) %>"><%= b %></span>
+          <% }) %>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+    <% } %>
+  </section>
+  <% }) %>
+</main>
+
+<%- include("partials/footer") %>

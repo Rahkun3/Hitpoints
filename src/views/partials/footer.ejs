@@ -1,0 +1,11 @@
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© hitpoints.eu — wiki</span>
+    <span>
+      <% universeList.forEach(function (u, i) { %><% if (i) { %> · <% } %><a href="/wiki/<%= u.id %>"><%= u.name %></a><% }) %>
+      · <a href="/admin">Admin</a>
+    </span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="wrap admin-page">
+  <div class="admin-toolbar">
+    <div>
+      <p class="hero-eyebrow">Admin</p>
+      <h1>Articles</h1>
+    </div>
+    <div class="admin-toolbar-actions">
+      <a class="btn btn-primary" href="/admin/new">New article</a>
+      <form method="post" action="/admin/logout"><button class="btn btn-ghost" type="submit">Log out</button></form>
+    </div>
+  </div>
+
+  <% if (flash === "saved") { %><p class="admin-flash">Saved. The public page updated immediately.</p><% } %>
+  <% if (flash === "deleted") { %><p class="admin-flash">Article deleted.</p><% } %>
+
+  <form class="admin-filter" method="get" action="/admin">
+    <label>Universe
+      <select name="universe" onchange="this.form.submit()">
+        <option value="">All</option>
+        <% universeList.forEach(function (u) { %>
+        <option value="<%= u.id %>" <%= filter === u.id ? "selected" : "" %>><%= u.name %></option>
+        <% }) %>
+      </select>
+    </label>
+  </form>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Universe</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% articles.forEach(function (a) { %>
+        <tr>
+          <td>
+            <a href="/admin/<%= a.universe %>/<%= a.slug %>/edit"><%= a.title %></a>
+            <div class="muted tiny"><%= a.slug %></div>
+          </td>
+          <td><%= universes[a.universe] ? universes[a.universe].name : a.universe %></td>
+          <td><%= a.category %></td>
+          <td><span class="status-pill <%= a.status %>"><%= a.status %></span></td>
+          <td class="admin-row-actions">
+            <% if (a.slug === "hub") { %>
+            <a href="/wiki/<%= a.universe %>">View</a>
+            <% } else { %>
+            <a href="/wiki/<%= a.universe %>/<%= a.slug %>">View</a>
+            <% } %>
+            <form method="post" action="/admin/<%= a.universe %>/<%= a.slug %>/delete" onsubmit="return confirm('Delete <%= a.title.replace(/'/g, '') %>? This cannot be undone.');">
+              <button type="submit" class="link-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+        <% if (!articles.length) { %>
+        <tr><td colspan="5" class="muted">No articles yet.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,80 @@
+<%- include("partials/head") %>
+<%- include("partials/header") %>
+
+<main class="wrap">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="/">Universes</a>
+    <span class="sep">/</span>
+    <a href="/wiki/<%= universe %>"><%= meta.name %></a>
+    <span class="sep">/</span>
+    <a href="/wiki/<%= universe %>#<%= categoryAnchor(article.category) %>"><%= article.category %></a>
+    <span class="sep">/</span>
+    <span><%= article.title %></span>
+  </nav>
+
+  <% if (article.banner) { %>
+  <figure class="page-banner thin">
+    <img src="<%= article.banner %>" alt="" />
+  </figure>
+  <% } %>
+
+  <div class="article-layout">
+    <article class="article-main">
+      <header class="article-header">
+        <div class="badges">
+          <% (article.badges || []).forEach(function (b) { %>
+          <span class="badge <%= badgeClass(b) %>"><%= b %></span>
+          <% }) %>
+        </div>
+        <h1><%= article.title %></h1>
+        <div class="meta-chips">
+          <span class="chip"><strong>Category</strong> <%= article.category %></span>
+          <% if (article.infobox && article.infobox.Role) { %>
+          <span class="chip"><strong>Role</strong> <%= article.infobox.Role %></span>
+          <% } %>
+          <% if (article.infobox && article.infobox.Continuity) { %>
+          <span class="chip"><strong>Continuity</strong> <%= article.infobox.Continuity %></span>
+          <% } %>
+        </div>
+      </header>
+
+      <div class="prose">
+        <% if (article.lede) { %>
+        <p class="lede"><%= article.lede %></p>
+        <% } %>
+        <%- bodyHtml %>
+        <% if (seeAlso && seeAlso.length) { %>
+        <h2 id="see-also">See also</h2>
+        <div class="see-also">
+          <% seeAlso.forEach(function (item) { %>
+          <a href="<%= item.href %>"><%= item.title %></a>
+          <% }) %>
+        </div>
+        <% } %>
+      </div>
+    </article>
+
+    <aside class="infobox" aria-label="Infobox">
+      <% if (article.portrait) { %>
+      <div class="infobox-media">
+        <img src="<%= article.portrait %>" alt="<%= article.title %>" />
+      </div>
+      <% } %>
+      <div class="infobox-title"><%= article.title %></div>
+      <dl class="infobox-body">
+        <% infoboxRows.forEach(function (row) { %>
+        <div class="infobox-row">
+          <dt><%= row[0] %></dt>
+          <dd><%= row[1] %></dd>
+        </div>
+        <% }) %>
+        <div class="infobox-row">
+          <dt>Category</dt>
+          <dd><%= article.category %></dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+</main>
+
+<%- include("partials/footer") %>

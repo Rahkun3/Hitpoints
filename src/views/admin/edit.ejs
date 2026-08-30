@@ -1,0 +1,142 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="wrap admin-page">
+  <div class="admin-toolbar">
+    <div>
+      <p class="hero-eyebrow">Admin</p>
+      <h1><%= isNew ? "New article" : "Edit article" %></h1>
+    </div>
+    <div class="admin-toolbar-actions">
+      <a class="btn btn-ghost" href="/admin">All articles</a>
+      <% if (!isNew && article.slug) { %>
+      <a class="btn btn-ghost" href="<%= article.slug === 'hub' ? '/wiki/' + article.universe : '/wiki/' + article.universe + '/' + article.slug %>">View</a>
+      <% } %>
+    </div>
+  </div>
+
+  <% if (typeof error !== "undefined" && error) { %>
+  <p class="admin-error"><%= error %></p>
+  <% } %>
+
+  <form class="admin-form admin-edit" method="post" action="/admin/save" enctype="multipart/form-data">
+    <input type="hidden" name="previous_universe" value="<%= previousUniverse || '' %>" />
+    <input type="hidden" name="previous_slug" value="<%= previousSlug || '' %>" />
+
+    <div class="admin-edit-grid">
+      <section class="admin-card">
+        <h2>Metadata</h2>
+        <label>Title
+          <input type="text" name="title" value="<%= article.title || '' %>" required />
+        </label>
+        <div class="admin-row-2">
+          <label>Universe
+            <select name="universe" id="universe">
+              <% universeList.forEach(function (u) { %>
+              <option value="<%= u.id %>" <%= article.universe === u.id ? "selected" : "" %>><%= u.name %></option>
+              <% }) %>
+            </select>
+          </label>
+          <label>Slug
+            <input type="text" name="slug" value="<%= article.slug || '' %>" placeholder="geralt-of-rivia" required />
+          </label>
+        </div>
+        <div class="admin-row-2">
+          <label>Category
+            <input type="text" name="category" id="category" value="<%= article.category || '' %>" list="category-list" />
+            <datalist id="category-list">
+              <% (universes[article.universe] ? universes[article.universe].categories : []).forEach(function (c) { %>
+              <option value="<%= c %>"></option>
+              <% }) %>
+            </datalist>
+          </label>
+          <label>Priority
+            <input type="number" name="priority" value="<%= article.priority != null ? article.priority : '' %>" min="1" step="1" placeholder="optional" />
+          </label>
+        </div>
+        <label>Status
+          <select name="status">
+            <option value="published" <%= article.status !== "draft" ? "selected" : "" %>>Published</option>
+            <option value="draft" <%= article.status === "draft" ? "selected" : "" %>>Draft</option>
+          </select>
+        </label>
+        <fieldset class="admin-badges">
+          <legend>Continuity badges</legend>
+          <% var currentBadges = article.badges || []; %>
+          <% var badgeOpts = (universes[article.universe] && universes[article.universe].badges) || ["Book","Game","Film","Series","Shared"]; %>
+          <% badgeOpts.forEach(function (b) { %>
+          <label class="inline">
+            <input type="checkbox" name="badges" value="<%= b %>" <%= currentBadges.indexOf(b) >= 0 ? "checked" : "" %> />
+            <%= b %>
+          </label>
+          <% }) %>
+        </fieldset>
+        <label>Lede
+          <textarea name="lede" rows="3"><%= article.lede || '' %></textarea>
+        </label>
+      </section>
+
+      <section class="admin-card">
+        <h2>Media and infobox</h2>
+        <label>Banner URL
+          <input type="text" name="banner" value="<%= article.banner || '' %>" placeholder="/uploads/banner.png" />
+        </label>
+        <label>Banner file
+          <input type="file" name="banner_file" accept="image/png,image/jpeg,image/webp,image/gif" />
+        </label>
+        <label>Portrait URL
+          <input type="text" name="portrait" value="<%= article.portrait || '' %>" placeholder="/uploads/portrait.png" />
+        </label>
+        <label>Portrait file
+          <input type="file" name="portrait_file" accept="image/png,image/jpeg,image/webp,image/gif" />
+        </label>
+        <div>
+          <div class="admin-inline-head">
+            <h3>Infobox rows</h3>
+            <button type="button" class="btn btn-ghost" id="add-infobox">Add row</button>
+          </div>
+          <div id="infobox-rows">
+            <% var box = article.infobox || {}; var keys = Object.keys(box); if (!keys.length) keys = [""]; %>
+            <% keys.forEach(function (k) { %>
+            <div class="infobox-edit-row">
+              <input type="text" name="infobox_key" placeholder="Label" value="<%= k %>" />
+              <input type="text" name="infobox_val" placeholder="Value" value="<%= box[k] || '' %>" />
+            </div>
+            <% }) %>
+          </div>
+        </div>
+        <label>See also <span class="muted tiny">(one slug per line, or universe/slug)</span>
+          <textarea name="seeAlso" rows="5"><%= (article.seeAlso || []).map(function (item) {
+            if (typeof item === "string") return item;
+            var slug = item.slug || "";
+            if (item.universe && item.universe !== article.universe) return item.universe + "/" + slug;
+            return slug;
+          }).join("\n") %></textarea>
+        </label>
+      </section>
+    </div>
+
+    <section class="admin-card">
+      <h2>Markdown body</h2>
+      <p class="muted tiny">Wiki links: [[slug]] or [[slug|label]]. Blockquotes become callouts.</p>
+      <div class="admin-split">
+        <label>Source
+          <textarea name="body" id="body" rows="22"><%= article.body || '' %></textarea>
+        </label>
+        <div>
+          <span class="muted tiny">Preview</span>
+          <div class="prose admin-preview" id="preview"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="admin-toolbar-actions">
+      <button class="btn btn-primary" type="submit">Save article</button>
+      <a class="btn btn-ghost" href="/admin">Cancel</a>
+    </div>
+  </form>
+</main>
+
+<script src="/vendor/marked.min.js"></script>
+<script src="/admin.js"></script>
+<%- include("../partials/footer") %>

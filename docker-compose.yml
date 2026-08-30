@@ -1,0 +1,31 @@
+# Unraid: HITPOINTS_DATA=/mnt/user/appdata/hitpoints
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      CONTENT_DIR: /data/content
+      UPLOADS_DIR: /data/uploads
+      PORT: "3000"
+    volumes:
+      - ${HITPOINTS_DATA:-./data}/content:/data/content
+      - ${HITPOINTS_DATA:-./data}/uploads:/data/uploads
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro

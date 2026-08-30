@@ -1,0 +1,69 @@
+<%- include("partials/head") %>
+<%- include("partials/header") %>
+
+<main>
+  <section class="hero">
+    <div class="hero-visual" aria-hidden="true">
+      <img src="/uploads/hero-continent.png" alt="" />
+    </div>
+    <div class="wrap">
+      <p class="hero-eyebrow">Wiki hub · Fantasy × Sci-fi</p>
+      <h1>Know the lore.<br /><span class="grad">Know the continuity.</span></h1>
+      <p class="hero-lead">
+        hitpoints.eu is a modern wiki for gaming and speculative fiction —
+        continuity badges per universe, shallow structure, no parchment cosplay.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/wiki/witcher">Explore The Witcher →</a>
+        <a class="btn btn-ghost" href="/wiki/dune">Explore Dune →</a>
+        <a class="btn btn-ghost" href="#universes">Browse universes</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="universes">
+    <div class="section-head">
+      <h2>Featured universes</h2>
+      <span class="sub">Universes → Categories → Articles</span>
+    </div>
+    <div class="card-grid">
+      <% universeList.forEach(function (u) { %>
+      <a class="card <%= u.featured ? 'featured' : 'in-progress' %>" href="/wiki/<%= u.id %>">
+        <div class="card-media">
+          <img src="<%= u.card %>" alt="<%= u.name %>" />
+        </div>
+        <span class="card-tag"><%= u.tag %></span>
+        <h3><%= u.name %></h3>
+        <p><%= u.blurb %></p>
+        <div class="card-meta">
+          <span><%= u.meta %></span>
+          <% if (typeof counts !== "undefined") { %>
+          <span><%= counts[u.id] || 0 %> articles</span>
+          <% } %>
+        </div>
+        <div class="badges">
+          <% u.badges.forEach(function (b) { %>
+          <span class="badge <%= badgeClass(b) %>"><%= b %></span>
+          <% }) %>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="section wrap" id="about">
+    <div class="section-head">
+      <h2>How continuity works</h2>
+    </div>
+    <div class="callout">
+      <strong>Every article shows badges</strong> for that universe’s tracks.
+      <em>The Witcher:</em> Book · Game · Netflix · Shared.
+      <em>Dune:</em> Book · Film · Series · Shared (Frank Herbert primary; films/TV as adaptations).
+      <em>Warcraft:</em> Game · Book · Shared.
+      <em>The Lord of the Rings:</em> Book · Film · Shared.
+      Shared means beats that travel across more than one continuity without claiming they are the same story.
+    </div>
+  </section>
+</main>
+
+<%- include("partials/footer") %>
